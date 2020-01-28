@@ -7,16 +7,13 @@ namespace MovieWebsite.Models
 {
 	public class Regisseur
 	{
-		public Regisseur()
-		{
-			Movies = new HashSet<Movie>();
-		}
+		public Regisseur() { }
 		public int ID { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 
 
 
-		public virtual ICollection<Movie> Movies { get; set; }
+		public ICollection<Movie> Movies { get; set; }
 	}
 }

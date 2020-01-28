@@ -1,0 +1,30 @@
+﻿@model IEnumerable<MovieWebsite.Models.Movie>
+@{
+	ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table>
+	<tr>
+		<th>Title</th>
+		<th>Description</th>
+		<th>RunTime</th>
+		<th>ReleaseDate</th>
+		<th>Original</th>
+		<th>Format</th>
+		<th>Owner</th>
+	</tr>
+	@foreach (var movie in Model)
+	{
+<tr>
+	<td>@movie.Title</td>
+	<td>@movie.Description</td>
+	<td>@movie.Runtime</td>
+	<td>@movie.ReleaseDate</td>
+	<td>@movie.Original</td>
+	<td>@movie.Format</td>
+	<td>@movie.Owner</td>
+</tr>
+	}
+</table>
