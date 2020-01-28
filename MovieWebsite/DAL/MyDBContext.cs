@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieWebsite.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MovieWebsite.DAL
 {
@@ -18,6 +14,6 @@ namespace MovieWebsite.DAL
 		public DbSet<Actor> Actors { get; set; }
 		public DbSet<Regisseur> Regisseurs { get; set; }
 
-		
+
 	}
 }
