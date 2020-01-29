@@ -11,7 +11,7 @@ namespace MovieWebsite.Models
 	{
 		private List<string> querystrings = new List<string>();
 		private string imdbstring = "https://sg.media-imdb.com/suggests/{0}/{1}.json";
-
+		private string xaaxstring = "http://www.xaaax.de/xfilme.php?film={0}&imdb=1&ofdb=1&fsk=1&art=a";
 		public void ADD(string querystring)
 		{
 			this.querystrings.Add(querystring);
@@ -22,11 +22,12 @@ namespace MovieWebsite.Models
 			this.querystrings.AddRange(querystrings);
 		}
 
-		/// <summary>
-		/// gets results and deletes all querys
-		/// </summary>
-		/// <returns>results</returns>
-		public List<string> GetAndDeleteQueryResults()
+		public List<string> GetXaaxQueryAndDeleteStrings()
+		{
+			return GetAndDeleteStrings(xaaxstring, false);
+
+		}
+		private List<string> GetAndDeleteStrings(string formatstring, bool imdbBool)
 		{
 			var results = new List<string>();
 			System.Diagnostics.Debug.WriteLine(querystrings.Count);
@@ -34,7 +35,16 @@ namespace MovieWebsite.Models
 			{
 				foreach (var querystring in querystrings)
 				{
-					string query = String.Format(imdbstring, Char.ToLower(querystring[0]), querystring);
+					string query;
+					if (imdbBool)
+					{
+						query = String.Format(formatstring, Char.ToLower(querystring[0]), querystring);
+					} 
+					else
+					{
+						query = String.Format(formatstring, querystring);
+					}
+					
 					try
 					{
 						System.Diagnostics.Debug.WriteLine(query);
@@ -44,11 +54,12 @@ namespace MovieWebsite.Models
 						{
 							results.Add(json);
 						}
-					} catch
+					}
+					catch
 					{
 
 					}
-					
+
 
 
 
@@ -56,6 +67,14 @@ namespace MovieWebsite.Models
 			}
 			querystrings = new List<string>();
 			return results;
+		}
+		/// <summary>
+		/// gets results and deletes all querys
+		/// </summary>
+		/// <returns>results</returns>
+		public List<string> GetAndDeleteIMDBQueryResults()
+		{
+			return GetAndDeleteStrings(imdbstring, true);
 		}
 	}
 }

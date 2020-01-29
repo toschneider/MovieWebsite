@@ -1,12 +1,25 @@
-﻿@model IEnumerable<string>
+﻿@model SearchViewModel
 @{
     ViewData["Title"] = "Search";
 }
 
 <h1>Search</h1>
 <ul>
-    @foreach (var res in Model)
+    <h1>Movies</h1>
+    @foreach (var movies in Model.movies)
     {
-        <li>@res</li>
+        <li>@movies.Title</li>
     }
+
+    <h1>TvShows</h1>
+    @foreach (var tvShow in Model.tvShows)
+    {
+        <li>@tvShow.Name</li>
+    }
+    <h1>People</h1>
+    @foreach (var person in Model.people)
+    {
+        <li>@person.Name</li>
+    }
+
 </ul>
