@@ -11,6 +11,8 @@ namespace MovieWebsite.Controllers
 {
 	public class HomeController : Controller
 	{
+		private string omdbapi = "http://www.omdbapi.com/?apikey=7763dce2";
+		
 		private readonly ILogger<HomeController> _logger;
 
 		public HomeController(ILogger<HomeController> logger)
@@ -32,6 +34,15 @@ namespace MovieWebsite.Controllers
 		public IActionResult Error()
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+		}
+		public ActionResult Search(string search)
+		{
+			IMDB imdb = new IMDB();
+			//System.Diagnostics.Debug.WriteLine(search);
+			var searchstrings = search.Split(" ").ToList();
+			//System.Diagnostics.Debug.WriteLine(searchstrings[0]);
+			imdb.ADD(searchstrings);
+			return View(imdb.GetAndDeleteQueryResults());
 		}
 	}
 }
