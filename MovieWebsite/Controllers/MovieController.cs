@@ -19,6 +19,19 @@ namespace MovieWebsite.Controllers
         {
             if(db.Movies.Count()== 0)
             {
+                List<Regisseur> regisseurs = new List<Regisseur>
+            {
+                new Regisseur
+                {
+                    FirstName="Peter",
+                    LastName="Jackson"
+                }
+            };
+                foreach (var r in regisseurs)
+                {
+                    db.Regisseurs.Add(r);
+                }
+                db.SaveChanges();
                 List<Movie> movies = new List<Movie>
             {
                 new Movie
@@ -38,19 +51,7 @@ namespace MovieWebsite.Controllers
                     db.Movies.Add(movie);
                 }
                 db.SaveChanges();
-                List<Regisseur> regisseurs = new List<Regisseur>
-            {
-                new Regisseur
-                {
-                    FirstName="Peter",
-                    LastName="Jackson"
-                }
-            };
-                foreach (var r in regisseurs)
-                {
-                    db.Regisseurs.Add(r);
-                }
-                db.SaveChanges();
+            
             }
             var movieList = db.Movies.ToList();
             return View(movieList);

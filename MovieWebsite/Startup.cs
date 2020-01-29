@@ -27,7 +27,7 @@ namespace MovieWebsite
 		{
 			services.AddControllersWithViews();
 			services.AddDbContext<MyDBContext>(options =>
-			   options.UseSqlServer(Configuration.GetConnectionString("MovieWebsiteDB")));
+			   options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
