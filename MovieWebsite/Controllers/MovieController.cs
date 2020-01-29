@@ -56,5 +56,9 @@ namespace MovieWebsite.Controllers
             var movieList = db.Movies.ToList();
             return View(movieList);
         }
+        public ActionResult Detail(int id)
+        {
+            return View();
+        }
     }
 }
