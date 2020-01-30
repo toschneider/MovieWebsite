@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MovieWebsite.DAL;
 using MovieWebsite.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,12 +17,13 @@ namespace MovieWebsite.Controllers
 	public class HomeController : Controller
 	{
 		//private string omdbapi = "http://www.omdbapi.com/?apikey=7763dce2";
-
+		private TMDb db;
 		private readonly ILogger<HomeController> _logger;
 
-		public HomeController(ILogger<HomeController> logger)
+		public HomeController(ILogger<HomeController> logger, MyDBContext context)
 		{
 			_logger = logger;
+			db = new TMDb(context);
 		}
 
 		public IActionResult Index()
@@ -54,7 +56,9 @@ namespace MovieWebsite.Controllers
 			{
 				foreach (var movie in movieResults.Results)
 				{
-					movies.Add(client.GetMovieAsync(movie.Id).Result);
+					var tmpMovie = client.GetMovieAsync(movie.Id,TMDbLib.Objects.Movies.MovieMethods.Credits).Result;
+					movies.Add(tmpMovie);
+					db.AddMovie(tmpMovie);
 				}
 			}
 			SearchContainer<SearchTv> showResults = client.SearchTvShowAsync(search).Result;
