@@ -44,6 +44,9 @@ namespace MovieWebsite.Controllers
 
 		public ActionResult Search(string search)
 		{
+			//Todo
+			db.clearDB();
+
 			//IMDB imdb = new IMDB();
 			//System.Diagnostics.Debug.WriteLine(search);
 			var searchstrings = search.Split(" ").ToList();

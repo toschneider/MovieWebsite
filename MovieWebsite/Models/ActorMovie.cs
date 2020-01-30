@@ -8,6 +8,7 @@ namespace MovieWebsite.Models
 	public class ActorMovie
 	{
 		public ActorMovie() { }
+		public string Character { get; set; }
 		public int ActorID { get; set; }
 		public Actor Actor { get; set; }
 		public int MovieID { get; set; }
