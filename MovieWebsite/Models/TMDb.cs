@@ -87,22 +87,40 @@ namespace MovieWebsite.Models
 			{
 				Title = movie.Title,
 				Description = movie.Overview,
-				ReleaseDate = movie.ReleaseDate.Value,
-				Runtime = movie.Runtime.Value.ToString(),
-				//RegisseurID =
+				ReleaseDate = movie.ReleaseDate.GetValueOrDefault(),
+				Runtime = movie.Runtime.GetValueOrDefault().ToString(),
+				RegisseurID = 1
 			});
 			db.SaveChanges();
-			Movie tmpMovie = db.Movies.Where(m => m.Title == movie.Title).First();
+			Movie tmpMovie = null;
+			try { tmpMovie = db.Movies.Where(m => m.Title == movie.Title).First(); }
+			catch {
+				db.Movies.Add(new Movie
+				{
+					Title = movie.Title,
+					Description = movie.Overview,
+					ReleaseDate = movie.ReleaseDate.Value,
+					Runtime = movie.Runtime.Value.ToString(),
+					RegisseurID = 1
+				});
+				tmpMovie = db.Movies.Where(m => m.Title == movie.Title).First();
+				db.SaveChanges();
+			}
 			foreach(var genre in movie.Genres)
 			{
-				Genre tmpGenre = db.Genres.Where(g => g.Name == genre.Name).First();
-				if (tmpGenre == null)
-				{
+				Genre tmpGenre = null;
+				try { tmpGenre = db.Genres.Where(g => g.Name == genre.Name).First(); }
+				catch {
 					db.Genres.Add(new Genre { Name = genre.Name });
 					db.SaveChanges();
+					tmpGenre = db.Genres.Where(g => g.Name == genre.Name).First();
 				}
-				db.GenreMovies.Add(new GenreMovie { GenreID = tmpGenre.ID, MovieID = tmpMovie.ID });
-				db.SaveChanges();
+				if(db.GenreMovies.Where(gm => gm.GenreID == tmpGenre.ID && gm.MovieID == tmpMovie.ID).Count() == 0)
+				{
+					db.GenreMovies.Add(new GenreMovie { GenreID = tmpGenre.ID, MovieID = tmpMovie.ID });
+					db.SaveChanges();
+				}
+
 			}
 			//db.GenreMovies
 		}
