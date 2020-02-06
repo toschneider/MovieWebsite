@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MovieWebsite.DAL;
 using MovieWebsite.Models;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -44,9 +45,11 @@ namespace MovieWebsite.Controllers
 
 		public ActionResult Search(string search)
 		{
+			Stopwatch sw = new Stopwatch();
+
 			//Todo
 			db.clearDB();
-
+			sw.Start();
 			//IMDB imdb = new IMDB();
 			//System.Diagnostics.Debug.WriteLine(search);
 			var searchstrings = search.Split(" ").ToList();
@@ -62,9 +65,13 @@ namespace MovieWebsite.Controllers
 				{
 					var tmpMovie = client.GetMovieAsync(movie.Id,TMDbLib.Objects.Movies.MovieMethods.Credits).Result;
 					movies.Add(tmpMovie);
-					db.AddMovie(tmpMovie);
+					//TODO only add when requested.
+					//db.AddMovie(tmpMovie);
 				}
 			}
+			sw.Stop();
+			System.Diagnostics.Debug.WriteLine("Elapsed Time after Movies: "+ sw.ElapsedMilliseconds);
+			sw.Start();
 			SearchContainer<SearchTv> showResults = client.SearchTvShowAsync(search).Result;
 			if (showResults.Results.Count != 0)
 			{
@@ -73,6 +80,9 @@ namespace MovieWebsite.Controllers
 					tvShows.Add(client.GetTvShowAsync(show.Id).Result);
 				}
 			}
+			sw.Stop();
+			System.Diagnostics.Debug.WriteLine("Elapsed Time after TvShows:  " + sw.ElapsedMilliseconds);
+			sw.Start();
 			SearchContainer<SearchPerson> personResults = client.SearchPersonAsync(search).Result;
 			if (personResults.Results.Count != 0)
 			{
@@ -81,7 +91,8 @@ namespace MovieWebsite.Controllers
 					people.Add(client.GetPersonAsync(person.Id).Result);
 				}
 			}
-
+			sw.Stop();
+			System.Diagnostics.Debug.WriteLine("Elapsed Time after Persons:  "+ sw.ElapsedMilliseconds);
 
 			return View(new SearchViewModel
 			{
@@ -92,6 +103,15 @@ namespace MovieWebsite.Controllers
 			//System.Diagnostics.Debug.WriteLine(searchstrings[0]);
 			//imdb.ADD(searchstrings);
 			//return View(imdb.GetXaaxQueryAndDeleteStrings());
+		}
+		[HttpPost]
+		public ActionResult DisplayMovieDetails(string jsonstring)
+		{
+			System.Diagnostics.Debug.WriteLine(" " + jsonstring);
+			TMDbMovie movie = JsonConvert.DeserializeObject<TMDbMovie>(jsonstring);
+			//TMDbMovie movie = jsonstring;
+			System.Diagnostics.Debug.WriteLine(""+movie.Title);
+			return View(movie);
 		}
 	}
 }

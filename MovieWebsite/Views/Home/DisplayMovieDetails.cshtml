@@ -1,0 +1,21 @@
+﻿@model TMDbLib.Objects.Movies.Movie
+    ViewData["Title"] = "DisplayMovieDetails";
+}
+
+    <h1>@Model.Title</h1>
+
+<ul>
+    <li>@Model.Overview</li>
+    <li>
+        <ul>
+            @foreach (var genre in @Model.Genres)
+            {
+                <li>@genre.Name</li>
+            }
+        </ul>
+    </li>
+    <li>@Model.Budget</li>
+    <li>@Model.ReleaseDate</li>
+    <li>@Model.Runtime</li>
+    <li>@Model.VoteAverage</li>
+</ul>
