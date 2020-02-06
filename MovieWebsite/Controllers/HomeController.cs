@@ -104,14 +104,17 @@ namespace MovieWebsite.Controllers
 			//imdb.ADD(searchstrings);
 			//return View(imdb.GetXaaxQueryAndDeleteStrings());
 		}
-		[HttpPost]
-		public ActionResult DisplayMovieDetails(string jsonstring)
+
+		public ActionResult DisplayMovieDetails(int id)
 		{
-			System.Diagnostics.Debug.WriteLine(" " + jsonstring);
-			TMDbMovie movie = JsonConvert.DeserializeObject<TMDbMovie>(jsonstring);
+			TMDbClient client = new TMDbClient("c768e7308be543456c95aca82d106fcb");
+			TMDbMovie movie = client.GetMovieAsync(id, TMDbLib.Objects.Movies.MovieMethods.Credits).Result;
+			System.Diagnostics.Debug.WriteLine(" " + id);
+			System.Diagnostics.Debug.WriteLine(" " + movie);
 			//TMDbMovie movie = jsonstring;
 			System.Diagnostics.Debug.WriteLine(""+movie.Title);
-			return View(movie);
+			//return View(movie);
+			return PartialView(movie);
 		}
 	}
 }

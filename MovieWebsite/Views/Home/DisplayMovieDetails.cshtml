@@ -1,8 +1,6 @@
 ﻿@model TMDbLib.Objects.Movies.Movie
-    ViewData["Title"] = "DisplayMovieDetails";
-}
 
-    <h1>@Model.Title</h1>
+<h1>@Model.Title</h1>
 
 <ul>
     <li>@Model.Overview</li>
@@ -14,8 +12,8 @@
             }
         </ul>
     </li>
-    <li>@Model.Budget</li>
+    <li>@Model.Budget $</li>
     <li>@Model.ReleaseDate</li>
-    <li>@Model.Runtime</li>
-    <li>@Model.VoteAverage</li>
+    <li>@Model.Runtime min</li>
+    <li>@Model.VoteAverage/10</li>
 </ul>

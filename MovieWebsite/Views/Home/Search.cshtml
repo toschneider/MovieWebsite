@@ -5,18 +5,18 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 <h1>Search</h1>
 <h1>Movies</h1>
-<div class="container">
+<div class="row">
 	<div class="col-md-4">
 		<div class="container">
 			<ul>
 
-				@foreach (var movie in Model.movies)
+				@foreach(var movie in Model.movies)
 				{
 					<li>
 						@*<a asp-controller="Movie"
 							asp-action="Detail"
 							asp-route-id="@movie.Id">@movie.Title</a>*@
-						<button class="search-result-button" data='@Html.Raw(Json.Serialize(movie))'>@movie.Title</button>
+						<button class="search-result-button" id="@movie.Id">"@movie.Title"</button>
 						@*<text>@Html.Raw(Json.Serialize(movie))</text>*@
 					</li>
 				}
@@ -40,39 +40,29 @@
 	</div>
 	<div class="col-md-8">
 		<div class="container">
-			<div class="preview-container">
+			<div class="divPartialViewContainer">
 
-			</div>
-			<div>
-				<text>test</text>
-				<text class="testtext"> </text>
 			</div>
 		</div>
 	</div>
 </div>
 <script>
 	$(document).ready(function(){
-    @*$('.search-result-button').click(function(e){
-		$.post('@Url.Action("DisplayMovieDetails","Home")', { id: e.target.id } function (data) {
-
-    //do whatever with the result.
-		});
-		$('preview-container').load('/Home/DisplayMovieDetails/' + e.target.id);
-	});*@
 		$('.search-result-button').click(function (e) {
-			var data = e.target.getAttribute("data");
-			$('testtext').html(data);
-            $.ajax({
-				url: '/Home/DisplayMovieDetails/',
-                type: 'POST',
-                contentType: 'application/html',
-				data: e.target.getAttribute("data"),
-				dataType: "json",
-                success: function (content) {
-                    $('#divPartialViewContainer').html(content);
-					},
-                error: function (e) { }
-				});
-        });
+			//var data = JSON.stringify(e.target.data);
+			//$('.testtext').html(data);
+			//$.ajax({
+			//	url: '/Home/DisplayMovieDetails/',
+			//	type: 'POST',
+			//	contentType: 'application/json',
+			//	data: data,
+			//	dataType: "json",
+			//	success: function (content) {
+			//		$('.divPartialViewContainer').html(content);
+			//		},
+			//	error: function (e) { }
+			//	});
+			$('.divPartialViewContainer').load('@Url.Action("DisplayMovieDetails", "Home")' + '/' + e.target.id);
+		});
   });
 </script>
