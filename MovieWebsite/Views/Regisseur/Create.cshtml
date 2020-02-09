@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+@using (Html.BeginForm("Create", "Regisseur"))
+{
+    <table>
+        <tr><td>FirstName</td><td><input type="text" name="FirstName" id="FirstName" placeholder="FirstName" required></td></tr>
+        <tr><td>LastName</td><td><input type="text" name="LastName" id="LastName" placeholder="LastName" required></td></tr>
+        
+    </table>
+    <button type="submit" id="SearchButton" onclick="location.href='@Url.Action("Create", "Regisseur")'">Create</button>
+}

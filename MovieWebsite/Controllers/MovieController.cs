@@ -4,10 +4,11 @@ using MovieWebsite.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace MovieWebsite.Controllers
 {
-	public class MovieController : Controller
+	public class MovieController : Microsoft.AspNetCore.Mvc.Controller
 	{
 		private MyDBContext db;
 
@@ -57,7 +58,36 @@ namespace MovieWebsite.Controllers
 			return View(movieList);
 		}
 
-		public ActionResult Detail(int id)
+
+
+
+
+		public Microsoft.AspNetCore.Mvc.ActionResult Create()
+		{
+			var regisseurquery = db.Regisseurs.ToList();
+			
+			if(regisseurquery != null && regisseurquery.Any())
+			{
+				return View(regisseurquery);
+			}
+			return View(new List<Regisseur>());
+		}
+		[Microsoft.AspNetCore.Mvc.HttpPost]
+		public Microsoft.AspNetCore.Mvc.ActionResult Create(string Title, string Description, int RegisseurID)
+		{
+			Movie movie = new Movie
+			{
+				Title = Title,
+				Description = Description,
+				RegisseurID = RegisseurID
+			};
+			db.Movies.Add(movie);
+			db.SaveChanges();
+
+			return RedirectToAction("Index");
+		}
+
+		public Microsoft.AspNetCore.Mvc.ActionResult Detail(int id)
 		{
 			return View();
 		}

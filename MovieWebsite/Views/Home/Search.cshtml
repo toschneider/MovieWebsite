@@ -2,46 +2,53 @@
 @{
 	ViewData["Title"] = "Search";
 }
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 <h1>Search</h1>
 <h1>Movies</h1>
 <div class="row">
 	<div class="col-md-4">
 		<div class="container">
-			<ul>
+			@if (Model.tvShows.Any())
+			{
+				<ul>
+					@foreach (var movie in Model.movies)
+					{
+						<li>
+							@*<a asp-controller="Movie"
+								asp-action="Detail"
+								asp-route-id="@movie.Id">@movie.Title</a>*@
+							<button class="search-result-button" id="@movie.Id">"@movie.Title"</button>
+							@*<text>@Html.Raw(Json.Serialize(movie))</text>*@
+						</li>
+					}
+				</ul>
+			}
+			@if (Model.tvShows.Any())
+			{
+				<h1>TvShows</h1>
+				<ul>
 
-				@foreach(var movie in Model.movies)
-				{
-					<li>
-						@*<a asp-controller="Movie"
-							asp-action="Detail"
-							asp-route-id="@movie.Id">@movie.Title</a>*@
-						<button class="search-result-button" id="@movie.Id">"@movie.Title"</button>
-						@*<text>@Html.Raw(Json.Serialize(movie))</text>*@
-					</li>
-				}
-			</ul>
-			<h1>TvShows</h1>
-			<ul>
-
-				@foreach (var tvShow in Model.tvShows)
-				{
-					<li>@tvShow.Name</li>
-				}
-			</ul>
-			<h1>People</h1>
-			<ul>
-				@foreach (var person in Model.people)
-				{
-					<li>@person.Name</li>
-				}
-			</ul>
+					@foreach (var tvShow in Model.tvShows)
+					{
+						<li>@tvShow.Name</li>
+					}
+				</ul>
+			}
+			@if (Model.people.Any())
+			{
+				<h1>People</h1>
+				<ul>
+					@foreach (var person in Model.people)
+					{
+						<li>@person.Name</li>
+					}
+				</ul>
+			}
 		</div>
 	</div>
 	<div class="col-md-8">
 		<div class="container">
 			<div class="divPartialViewContainer">
-
 			</div>
 		</div>
 	</div>

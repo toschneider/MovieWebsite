@@ -1,6 +1,7 @@
 ﻿using MovieWebsite.DAL;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.People;
@@ -13,7 +14,7 @@ namespace MovieWebsite.Models
 	public class TMDb
 	{
 		private TMDbClient client = new TMDbClient("c768e7308be543456c95aca82d106fcb");
-		private MyDBContext db;
+		public MyDBContext db;
 
 		public TMDb(MyDBContext context)
 		{
@@ -72,6 +73,8 @@ namespace MovieWebsite.Models
 		{
 			return client.GetPersonAsync(id).Result;
 		}
+
+		
 
 		public void AddMovie(TMDbMovie movie)
 		{

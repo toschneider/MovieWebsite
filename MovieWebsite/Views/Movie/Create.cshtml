@@ -1,0 +1,28 @@
+﻿@model IEnumerable<MovieWebsite.Models.Regisseur>
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+@using (Html.BeginForm("Create", "Movie"))
+{
+<table>
+    <tr><td>Title</td><td><input type="text" name="Title" id="Title" placeholder="Title" required></td></tr>
+    <tr><td>Description</td><td><input type="text" name="Description" id="Description" placeholder="Description" required></td></tr>
+    <tr>
+        <label>
+            <td>Regisseur:</td>
+            <td>
+                <select name="RegisseurID" id="RegisseurID" size="5" runat="server">
+                    @foreach (var regisseur in Model)
+                    {
+                    <option value="@regisseur.ID">@regisseur.FirstName @regisseur.LastName</option>
+                    }
+                </select>
+            </td>
+        </label>
+    </tr>
+</table>
+        <button type="submit" id="SearchButton" onclick="location.href='@Url.Action("Create", "Movie")'">Create</button>
+}

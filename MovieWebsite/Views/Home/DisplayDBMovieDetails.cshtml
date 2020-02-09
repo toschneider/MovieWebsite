@@ -1,0 +1,32 @@
+﻿@model MovieWebsite.Models.MovieViewModel
+@{
+	ViewData["Title"] = "DisplayDBMovieDetails";
+}
+
+<<h1>@Model.Movie.Title</h1>
+
+ <ul>
+	 <li>@Model.Movie.Description</li>
+	 <li>
+		 <ul>
+			 @foreach (var genre in @Model.Genres)
+			 {
+				 <li>@genre.Name</li>
+			 }
+		 </ul>
+	 </li>
+	 <li>@Model.Movie.Regisseur.FirstName @Model.Movie.Regisseur.LastName</li>
+	 <li>@Model.Movie.Runtime</li>
+	 <li>@Model.Movie.ReleaseDate</li>
+	 <li>@Model.Movie.Format</li>
+	 <li>@Model.Movie.Original</li>
+	 <li>@Model.Movie.Owner</li>
+	 <li>
+		 <ul>
+			 @foreach(var actor in Model.Actors)
+			 {
+				 <li>@actor.FirstName @actor.LastName</li>
+			 }
+		 </ul>
+	 </li>
+ </ul>

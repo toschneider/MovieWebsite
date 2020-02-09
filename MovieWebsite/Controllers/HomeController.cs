@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MovieWebsite.DAL;
 using MovieWebsite.Models;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -48,7 +48,7 @@ namespace MovieWebsite.Controllers
 			Stopwatch sw = new Stopwatch();
 
 			//Todo
-			db.clearDB();
+			//db.clearDB();
 			sw.Start();
 			//IMDB imdb = new IMDB();
 			//System.Diagnostics.Debug.WriteLine(search);
@@ -104,8 +104,59 @@ namespace MovieWebsite.Controllers
 			//imdb.ADD(searchstrings);
 			//return View(imdb.GetXaaxQueryAndDeleteStrings());
 		}
+		public string getTags(string searchString)
+		{
+			var results = new HashSet<string>();
 
-		public ActionResult DisplayMovieDetails(int id)
+			var titlequery = db.db.Movies.Where(m => m.Title.Contains(searchString));
+			if (titlequery != null && titlequery.Any())
+			{
+				foreach (var movie in titlequery)
+				{
+					results.Add(movie.Title);
+					System.Diagnostics.Debug.WriteLine(" " + movie.Title);
+				}
+			}
+
+			return JsonSerializer.Serialize(results.ToList());
+		}
+		public ActionResult DisplayDBMovieDetails(int id)
+		{
+			Movie movie = db.db.Movies.Find(id);
+			HashSet<Models.Genre> genres = new HashSet<Models.Genre>();
+			var genremovies = db.db.GenreMovies;
+			if (genremovies.Any())
+			{
+				foreach (var genre in genremovies.Where(gm => gm.MovieID == id))
+				{
+					genres.Add(db.db.Genres.Find(genre.GenreID));
+				}
+			}
+			HashSet<Actor> actors = new HashSet<Actor>();
+			var actormovies = db.db.ActorMovies;
+			if (actormovies.Any())
+			{
+				foreach(var actor in actormovies.Where(am => am.MovieID == movie.ID))
+				{
+					actors.Add(db.db.Actors.Find(actor.ActorID));
+				}
+			}
+
+			MovieViewModel movieViewModel = new MovieViewModel
+			{
+				Movie = movie,
+				Genres = genres.ToList(),
+				Regisseur = db.db.Regisseurs.Find(movie.RegisseurID),
+				Actors = actors.ToList()
+				
+			};
+			return PartialView(movieViewModel);
+		}
+
+
+
+
+			public ActionResult DisplayMovieDetails(int id)
 		{
 			TMDbClient client = new TMDbClient("c768e7308be543456c95aca82d106fcb");
 			TMDbMovie movie = client.GetMovieAsync(id, TMDbLib.Objects.Movies.MovieMethods.Credits).Result;
