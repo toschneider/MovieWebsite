@@ -43,63 +43,85 @@ namespace MovieWebsite.Controllers
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
 
-		public ActionResult Search(string search)
+		public ActionResult Search(string search, string searchCheckbox)
 		{
 			Stopwatch sw = new Stopwatch();
-
+			System.Diagnostics.Debug.WriteLine("Checkbox: " + searchCheckbox);
+			if(search == null || search.Length == 0)
+			{
+				return RedirectToAction("Index");
+			}
 			//Todo
 			//db.clearDB();
-			sw.Start();
-			//IMDB imdb = new IMDB();
-			//System.Diagnostics.Debug.WriteLine(search);
-			var searchstrings = search.Split(" ").ToList();
-			TMDbClient client = new TMDbClient("c768e7308be543456c95aca82d106fcb");
-			//Todo
-			SearchContainer<SearchMovie> movieResults = client.SearchMovieAsync(search).Result;
-			List<TMDbMovie> movies = new List<TMDbMovie>();
-			List<TvShow> tvShows = new List<TvShow>();
-			List<Person> people = new List<Person>();
-			if (movieResults.Results.Count != 0)
+			if(searchCheckbox == "checked")
 			{
-				foreach (var movie in movieResults.Results)
+				sw.Start();
+				//IMDB imdb = new IMDB();
+				//System.Diagnostics.Debug.WriteLine(search);
+				var searchstrings = search.Split(" ").ToList();
+				TMDbClient client = new TMDbClient("c768e7308be543456c95aca82d106fcb");
+				//Todo
+				SearchContainer<SearchMovie> movieResults = client.SearchMovieAsync(search).Result;
+				List<TMDbMovie> movies = new List<TMDbMovie>();
+				List<TvShow> tvShows = new List<TvShow>();
+				List<Person> people = new List<Person>();
+				if (movieResults.Results.Count != 0)
 				{
-					var tmpMovie = client.GetMovieAsync(movie.Id,TMDbLib.Objects.Movies.MovieMethods.Credits).Result;
-					movies.Add(tmpMovie);
-					//TODO only add when requested.
-					//db.AddMovie(tmpMovie);
+					foreach (var movie in movieResults.Results)
+					{
+						var tmpMovie = client.GetMovieAsync(movie.Id, TMDbLib.Objects.Movies.MovieMethods.Credits).Result;
+						movies.Add(tmpMovie);
+						//TODO only add when requested.
+						//db.AddMovie(tmpMovie);
+					}
 				}
-			}
-			sw.Stop();
-			System.Diagnostics.Debug.WriteLine("Elapsed Time after Movies: "+ sw.ElapsedMilliseconds);
-			sw.Start();
-			SearchContainer<SearchTv> showResults = client.SearchTvShowAsync(search).Result;
-			if (showResults.Results.Count != 0)
-			{
-				foreach (var show in showResults.Results)
+				sw.Stop();
+				System.Diagnostics.Debug.WriteLine("Elapsed Time after Movies: " + sw.ElapsedMilliseconds);
+				sw.Start();
+				SearchContainer<SearchTv> showResults = client.SearchTvShowAsync(search).Result;
+				if (showResults.Results.Count != 0)
 				{
-					tvShows.Add(client.GetTvShowAsync(show.Id).Result);
+					foreach (var show in showResults.Results)
+					{
+						tvShows.Add(client.GetTvShowAsync(show.Id).Result);
+					}
 				}
-			}
-			sw.Stop();
-			System.Diagnostics.Debug.WriteLine("Elapsed Time after TvShows:  " + sw.ElapsedMilliseconds);
-			sw.Start();
-			SearchContainer<SearchPerson> personResults = client.SearchPersonAsync(search).Result;
-			if (personResults.Results.Count != 0)
-			{
-				foreach (var person in personResults.Results)
+				sw.Stop();
+				System.Diagnostics.Debug.WriteLine("Elapsed Time after TvShows:  " + sw.ElapsedMilliseconds);
+				sw.Start();
+				SearchContainer<SearchPerson> personResults = client.SearchPersonAsync(search).Result;
+				if (personResults.Results.Count != 0)
 				{
-					people.Add(client.GetPersonAsync(person.Id).Result);
+					foreach (var person in personResults.Results)
+					{
+						people.Add(client.GetPersonAsync(person.Id).Result);
+					}
 				}
-			}
-			sw.Stop();
-			System.Diagnostics.Debug.WriteLine("Elapsed Time after Persons:  "+ sw.ElapsedMilliseconds);
+				sw.Stop();
+				System.Diagnostics.Debug.WriteLine("Elapsed Time after Persons:  " + sw.ElapsedMilliseconds);
 
-			return View(new SearchViewModel
+				return View(new SearchViewModel
+				{
+					movies = movies,
+					tvShows = tvShows,
+					people = people
+				});
+			} 
+			else
 			{
-				movies = movies,
-				tvShows = tvShows,
-				people = people
-			});
+				var moviequery = db.db.Movies.Where(m => m.Title.Contains(search));
+				List<Movie> movies = new List<Movie>();
+				if(moviequery != null && moviequery.Any())
+				{
+
+				}
+
+				return View(new SearchViewModel
+				{
+					
+				});
+			}
+			
 			//System.Diagnostics.Debug.WriteLine(searchstrings[0]);
 			//imdb.ADD(searchstrings);
 			//return View(imdb.GetXaaxQueryAndDeleteStrings());
