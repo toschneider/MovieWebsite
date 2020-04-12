@@ -3,11 +3,21 @@
 	ViewData["Title"] = "DisplayDBMovieDetails";
 }
 
-<<h1>@Model.Movie.Title</h1>
+<h1>@Model.Movie.Title</h1>
 
+<input type="button" class="delete-button" value="Delete Movie">
+<div class="delete-container" id="hidden-container" hidden>
+	<text>Delete Movie?</text>
+	<button class="yes-button" id="@Model.Movie.ID">Yes</button>
+	<button class="no-button">No</button>
+</div>
+@{
+	string pic = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + Model.MovieCover;
+}
+<img src="@pic" width="200" height="300"/>
  <ul>
-	 <li>@Model.Movie.Description</li>
-	 <li>
+	 <li>Description: @Model.Movie.Description</li>
+	 <li>Genres:
 		 <ul>
 			 @foreach (var genre in @Model.Genres)
 			 {
@@ -15,13 +25,13 @@
 			 }
 		 </ul>
 	 </li>
-	 <li>@Model.Movie.Regisseur.FirstName @Model.Movie.Regisseur.LastName</li>
-	 <li>@Model.Movie.Runtime</li>
-	 <li>@Model.Movie.ReleaseDate</li>
-	 <li>@Model.Movie.Format</li>
-	 <li>@Model.Movie.Original</li>
-	 <li>@Model.Movie.Owner</li>
-	 <li>
+	 <li>Regisseur: @Model.Movie.Regisseur.FirstName @Model.Movie.Regisseur.LastName</li>
+	 <li>Runtime: @Model.Movie.Runtime min</li>
+	 <li>Releasedate: @Model.Movie.ReleaseDate</li>
+	 <li>Format: @Model.Movie.Format</li>
+	 <li>Original: @Model.Movie.Original</li>
+	 <li>Owner: @Model.Movie.Owner</li>
+	 <li>Actors:
 		 <ul>
 			 @foreach(var actor in Model.Actors)
 			 {
@@ -30,3 +40,23 @@
 		 </ul>
 	 </li>
  </ul>
+ <div class="dummy" hidden></div>
+ <script>
+	$(document).ready(function () {
+		$('.delete-button').click(function (e) {
+			alert("show delete");
+			var hiddenContainer = document.getElementById("hidden-container");
+			hiddenContainer.hidden = false;
+		});
+		$('.yes-button').click(function (e) {
+			alert("delete Movie");
+			$('.dummy').load('@Url.Action("DeleteMovie", "Home")' + '/' + e.target.id);
+			var hiddenContainer = document.getElementById("hidden-container");
+			hiddenContainer.hidden = true;
+		});
+		$('.no-button').click(function (e) {
+			var hiddenContainer = document.getElementById("hidden-container");
+			hiddenContainer.hidden = true;
+		});
+	});
+ </script>

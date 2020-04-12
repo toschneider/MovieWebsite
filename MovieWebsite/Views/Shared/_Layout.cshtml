@@ -32,10 +32,10 @@
 					<text>online Search:</text>
 				</div>
 			</div>
-			<label class="switch" >
+			<label class="switch">
 				<input class="switch-input" type="checkbox" id="checkbox-switch" onclick="checkingBox()" />
 				<span class="switch-label" data-on="On" data-off="Off"></span>
-				<span class="switch-handle" ></span>
+				<span class="switch-handle"></span>
 			</label>
 
 			<div class="container">
@@ -64,24 +64,25 @@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+	<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
 	@RenderSection("Scripts", required: false)
 
 	<script>
 		function checkingBox() {
-				var checkBox = document.getElementById("checkbox-switch");
-				var hiddenInput = document.getElementById("searchCheckbox");
-				if (checkBox.checked == true) {
-					hiddenInput.value = "checked";
-					alert("checked");
-				} else {
-					hiddenInput.value = "unchecked";
-					alert("unchecked");
-				}
-
+			var checkBox = document.getElementById("checkbox-switch");
+			var hiddenInput = document.getElementById("searchCheckbox");
+			if (checkBox.checked == true) {
+				hiddenInput.value = "checked";
+				alert("checked");
+			} else {
+				hiddenInput.value = "unchecked";
+				alert("unchecked");
 			}
+
+		}
 		$(function () {
 			var global_tags;
-			
+
 
 			function split(val) {
 				return val.split(/,\s*/);
@@ -104,7 +105,7 @@
 
 						$.ajax({
 							type: "GET",
-							url: "Home/getTags",
+							url: "/Home/getTags",
 							data: { searchString: request.term },
 							contentType: "application/json;charset=utf-8",
 							dataType: "json",
@@ -127,7 +128,7 @@
 						terms.push(ui.item.value);
 						// add placeholder to get the comma-and-space at the end
 						terms.push("");
-						this.value = terms.join(", ");
+						this.value = terms.join("");
 						return false;
 					}
 				});

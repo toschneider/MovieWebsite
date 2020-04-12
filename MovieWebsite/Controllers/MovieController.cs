@@ -59,13 +59,10 @@ namespace MovieWebsite.Controllers
 		}
 
 
-
-
-
 		public Microsoft.AspNetCore.Mvc.ActionResult Create()
 		{
 			var regisseurquery = db.Regisseurs.ToList();
-			
+
 			if(regisseurquery != null && regisseurquery.Any())
 			{
 				return View(regisseurquery);

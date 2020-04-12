@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Logging;
 using MovieWebsite.DAL;
 using MovieWebsite.Models;
-using System.Text.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.People;
@@ -19,6 +19,7 @@ namespace MovieWebsite.Controllers
 	{
 		//private string omdbapi = "http://www.omdbapi.com/?apikey=7763dce2";
 		private TMDb db;
+
 		private readonly ILogger<HomeController> _logger;
 
 		public HomeController(ILogger<HomeController> logger, MyDBContext context)
@@ -47,17 +48,18 @@ namespace MovieWebsite.Controllers
 		{
 			Stopwatch sw = new Stopwatch();
 			System.Diagnostics.Debug.WriteLine("Checkbox: " + searchCheckbox);
-			if(search == null || search.Length == 0)
+			sw.Start();
+			if (search == null || search.Length == 0)
 			{
 				return RedirectToAction("Index");
 			}
 			//Todo
 			//db.clearDB();
-			if(searchCheckbox == "checked")
+			if (searchCheckbox == "checked")
 			{
 				sw.Start();
 				//IMDB imdb = new IMDB();
-				//System.Diagnostics.Debug.WriteLine(search);
+				System.Diagnostics.Debug.WriteLine("in checked: " + searchCheckbox);
 				var searchstrings = search.Split(" ").ToList();
 				TMDbClient client = new TMDbClient("c768e7308be543456c95aca82d106fcb");
 				//Todo
@@ -104,33 +106,76 @@ namespace MovieWebsite.Controllers
 				{
 					movies = movies,
 					tvShows = tvShows,
-					people = people
-				});
-			} 
-			else
-			{
-				var moviequery = db.db.Movies.Where(m => m.Title.Contains(search));
-				List<Movie> movies = new List<Movie>();
-				if(moviequery != null && moviequery.Any())
-				{
-
-				}
-
-				return View(new SearchViewModel
-				{
-					
+					people = people,
+					movieViewModels = new List<MovieViewModel>()
 				});
 			}
-			
+			else
+			{
+				System.Diagnostics.Debug.WriteLine("in unchecked: " + searchCheckbox);
+
+				List<Movie> movies = new List<Movie>();
+				List<MovieViewModel> movieViewModels = new List<MovieViewModel>();
+				var moviequery = db.db.Movies.Where(m => m.Title.ToLower().Contains(search.ToLower())).ToList();
+					if (moviequery != null && moviequery.Any())
+					{
+						foreach (var movie in moviequery)
+						{
+							movies.Add(movie);
+						}
+					}
+				foreach (var movie in movies)
+				{
+					System.Diagnostics.Debug.WriteLine("in unchecked: " + movie.Title);
+					List<Actor> actors = new List<Actor>();
+					var actormovies = db.db.ActorMovies.Where(am => am.MovieID == movie.ID).ToList();
+					foreach (var actormovie in actormovies)
+					{
+						actors.Add(db.db.Actors.Find(actormovie.ActorID));
+					}
+					List<Models.Genre> genres = new List<Models.Genre>();
+					var genremovies = db.db.GenreMovies.Where(gm => gm.MovieID == movie.ID).ToList();
+					foreach (var genremovie in genremovies)
+					{
+						genres.Add(db.db.Genres.Find(genremovie.GenreID));
+					}
+					movieViewModels.Add(new MovieViewModel
+					{
+						Movie = movie,
+						Genres = genres,
+						Regisseur = db.db.Regisseurs.Find(movie.RegisseurID),
+						Actors = actors
+					});
+				}
+				sw.Stop();
+				System.Diagnostics.Debug.WriteLine("Time elapsed in s: " + sw.Elapsed);
+				return View(new SearchViewModel
+				{
+					movies = new List<TMDbMovie>(),
+					tvShows = new List<TvShow>(),
+					people = new List<Person>(),
+					movieViewModels = movieViewModels
+				});
+			}
+
 			//System.Diagnostics.Debug.WriteLine(searchstrings[0]);
 			//imdb.ADD(searchstrings);
 			//return View(imdb.GetXaaxQueryAndDeleteStrings());
 		}
+
+		public void addToDB(int id, string Owner, string Format, string Original)
+		{
+			TMDbMovie movie = db.GetMovieAndCreditsWitchID(id);
+			System.Diagnostics.Debug.WriteLine("Add " + movie.Title);
+			//Todo test owner/Format
+			db.AddMovie(movie, Owner, Format, Original);
+		}
+
 		public string getTags(string searchString)
 		{
 			var results = new HashSet<string>();
 
-			var titlequery = db.db.Movies.Where(m => m.Title.Contains(searchString));
+			var titlequery = db.db.Movies.Where(m => m.Title.ToLower().Contains(searchString.ToLower())).ToList();
 			if (titlequery != null && titlequery.Any())
 			{
 				foreach (var movie in titlequery)
@@ -142,11 +187,13 @@ namespace MovieWebsite.Controllers
 
 			return JsonSerializer.Serialize(results.ToList());
 		}
+
 		public ActionResult DisplayDBMovieDetails(int id)
 		{
-			Movie movie = db.db.Movies.Find(id);
+			System.Diagnostics.Debug.WriteLine("id: " + id);
+			Movie movie = db.db.Movies.Where(m => m.ID == id).FirstOrDefault();
 			HashSet<Models.Genre> genres = new HashSet<Models.Genre>();
-			var genremovies = db.db.GenreMovies;
+			var genremovies = db.db.GenreMovies.ToList();
 			if (genremovies.Any())
 			{
 				foreach (var genre in genremovies.Where(gm => gm.MovieID == id))
@@ -155,10 +202,10 @@ namespace MovieWebsite.Controllers
 				}
 			}
 			HashSet<Actor> actors = new HashSet<Actor>();
-			var actormovies = db.db.ActorMovies;
+			var actormovies = db.db.ActorMovies.ToList();
 			if (actormovies.Any())
 			{
-				foreach(var actor in actormovies.Where(am => am.MovieID == movie.ID))
+				foreach (var actor in actormovies.Where(am => am.MovieID == movie.ID))
 				{
 					actors.Add(db.db.Actors.Find(actor.ActorID));
 				}
@@ -169,23 +216,25 @@ namespace MovieWebsite.Controllers
 				Movie = movie,
 				Genres = genres.ToList(),
 				Regisseur = db.db.Regisseurs.Find(movie.RegisseurID),
-				Actors = actors.ToList()
-				
-			};
+				Actors = actors.ToList(),
+				MovieCover = db.GetMovieCover(movie.Title)
+		};
+
+
 			return PartialView(movieViewModel);
 		}
-
-
-
-
-			public ActionResult DisplayMovieDetails(int id)
+		public void DeleteMovie(int id)
+		{
+			System.Diagnostics.Debug.WriteLine(id +" remove successful: " + db.deleteMovie(id));
+		}
+		public ActionResult DisplayMovieDetails(int id)
 		{
 			TMDbClient client = new TMDbClient("c768e7308be543456c95aca82d106fcb");
 			TMDbMovie movie = client.GetMovieAsync(id, TMDbLib.Objects.Movies.MovieMethods.Credits).Result;
 			System.Diagnostics.Debug.WriteLine(" " + id);
 			System.Diagnostics.Debug.WriteLine(" " + movie);
 			//TMDbMovie movie = jsonstring;
-			System.Diagnostics.Debug.WriteLine(""+movie.Title);
+			System.Diagnostics.Debug.WriteLine("" + movie.Title);
 			//return View(movie);
 			return PartialView(movie);
 		}

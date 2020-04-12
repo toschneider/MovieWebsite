@@ -10,6 +10,11 @@
 <table>
     <tr><td>Title</td><td><input type="text" name="Title" id="Title" placeholder="Title" required></td></tr>
     <tr><td>Description</td><td><input type="text" name="Description" id="Description" placeholder="Description" required></td></tr>
+    <tr><td>Runtime</td><td><input type="text" name="Runtime" id="Runtime" placeholder="Runtime" required></td></tr>
+    <tr><td>ReleaseDate</td><td><input type="text" name="ReleaseDate" id="ReleaseDate" placeholder="ReleaseDate" required></td></tr>
+    <tr><td>Original</td><td><input type="text" name="Original" id="Original" placeholder="Original" required></td></tr>
+    <tr><td>Owner</td><td><input type="text" name="Owner" id="Owner" placeholder="Owner" required></td></tr>
+    <tr><td>Format</td><td><input type="text" name="Format" id="Format" placeholder="Format" required></td></tr>
     <tr>
         <label>
             <td>Regisseur:</td>
@@ -17,12 +22,16 @@
                 <select name="RegisseurID" id="RegisseurID" size="5" runat="server">
                     @foreach (var regisseur in Model)
                     {
-                    <option value="@regisseur.ID">@regisseur.FirstName @regisseur.LastName</option>
+                        <option value="@regisseur.ID">@regisseur.FirstName @regisseur.LastName</option>
                     }
                 </select>
             </td>
         </label>
     </tr>
+    @*Todo actor and genre*@
+
+
+
 </table>
         <button type="submit" id="SearchButton" onclick="location.href='@Url.Action("Create", "Movie")'">Create</button>
 }

@@ -11,6 +11,6 @@ namespace MovieWebsite.Models
 		public List<Genre> Genres { get; set; }
 		public Regisseur Regisseur { get; set; }
 		public List<Actor> Actors { get; set; }
-
+		public string MovieCover { get; set; }
 	}
 }

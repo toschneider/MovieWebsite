@@ -13,5 +13,8 @@ namespace MovieWebsite.Models
 		public List<TMDbMovie> movies { get; set; }
 		public List<TvShow> tvShows { get; set; }
 		public List<Person> people { get; set; }
+		public List<MovieViewModel> movieViewModels { get; set; }
+
+
 	}
 }
