@@ -38,7 +38,6 @@
 <script>
 	$(document).ready(function(){
 		$('.add-db-button').click(function (e) {
-			alert("buttonpressed");
 			var ownerEle = document.getElementById("owner");
 			var owner = ownerEle.options[ownerEle.selectedIndex].value;
 			var formatEle = document.getElementById("format");
@@ -55,10 +54,8 @@
 			function (e) {
 				var hiddeninput = document.getElementById("originalCheckbox");
 				if (hiddeninput.value == "false") {
-					alert("original");
 					hiddeninput.value = "true";
 				} else {
-					alert("not original");
 					hiddeninput.value = "false";
 				}
 			}
@@ -67,10 +64,8 @@
     function setOriginal() {
         var hiddeninput = document.getElementById("originalCheckbox");
 		if (hiddeninput.value == "false") {
-			alert("original");
             hiddeninput.value = "true";
 		} else {
-			alert("not original");
             hiddeninput.value = "false";
 		}
 	}

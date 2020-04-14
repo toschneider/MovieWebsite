@@ -44,12 +44,10 @@
  <script>
 	$(document).ready(function () {
 		$('.delete-button').click(function (e) {
-			alert("show delete");
 			var hiddenContainer = document.getElementById("hidden-container");
 			hiddenContainer.hidden = false;
 		});
 		$('.yes-button').click(function (e) {
-			alert("delete Movie");
 			$('.dummy').load('@Url.Action("DeleteMovie", "Home")' + '/' + e.target.id);
 			var hiddenContainer = document.getElementById("hidden-container");
 			hiddenContainer.hidden = true;
